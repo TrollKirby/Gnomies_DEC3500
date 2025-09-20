@@ -17,6 +17,16 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(express.json());
 
+// Set cache headers for favicon and static assets
+app.use((req, res, next) => {
+  if (req.path.includes('favicon') || req.path.includes('logo')) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+  next();
+});
+
 // Serve static files from React build
 app.use(express.static(path.join(__dirname, 'client/build')));
 
