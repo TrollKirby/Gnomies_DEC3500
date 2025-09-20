@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { useGame } from '../context/GameContext';
+import { useGame } from '../context/GameContext.jsx';
 
 const Landing = ({ onScreenChange }) => {
   const { socket, error, dispatch } = useGame();

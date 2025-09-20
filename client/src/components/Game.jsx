@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { useGame } from '../context/GameContext';
-import Timer from './Timer';
-import NarrativePhase from './phases/NarrativePhase';
-import VotingPhase from './phases/VotingPhase';
-import PromptingPhase from './phases/PromptingPhase';
-import WritingPhase from './phases/WritingPhase';
-import AlternativeEndingsPhase from './phases/AlternativeEndingsPhase';
-import CompletePhase from './phases/CompletePhase';
+import { useGame } from '../context/GameContext.jsx';
+import Timer from './Timer.jsx';
+import NarrativePhase from './phases/NarrativePhase.jsx';
+import VotingPhase from './phases/VotingPhase.jsx';
+import PromptingPhase from './phases/PromptingPhase.jsx';
+import WritingPhase from './phases/WritingPhase.jsx';
+import AlternativeEndingsPhase from './phases/AlternativeEndingsPhase.jsx';
+import CompletePhase from './phases/CompletePhase.jsx';
 
 const Game = ({ onScreenChange }) => {
   const { phase, players, timeRemaining, timeExtensions, maxTimeExtensions, isHost, socket } = useGame();

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGame } from '../../context/GameContext';
+import { useGame } from '../../context/GameContext.jsx';
 import VoteItem from '../VoteItem';
 
 const VotingPhase = () => {

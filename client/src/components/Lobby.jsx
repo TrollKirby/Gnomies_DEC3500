@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useMemo } from 'react';
-import { useGame } from '../context/GameContext';
+import { useGame } from '../context/GameContext.jsx';
 
 const Lobby = ({ onScreenChange }) => {
   const { id, players, isHost, socket } = useGame();

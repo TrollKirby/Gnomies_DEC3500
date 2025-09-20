@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { GameProvider, useGame } from './context/GameContext';
-import Landing from './components/Landing';
-import Lobby from './components/Lobby';
-import Game from './components/Game';
+import { GameProvider, useGame } from './context/GameContext.jsx';
+import Landing from './components/Landing.jsx';
+import Lobby from './components/Lobby.jsx';
+import Game from './components/Game.jsx';
 import './App.css';
 
 const AppContent = () => {
