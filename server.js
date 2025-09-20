@@ -43,8 +43,8 @@ const PHASES = {
 // Game configuration
 const GAME_CONFIG = {
   maxPlayers: 8,
-  writingTime: 300000, // 5 minutes
-  votingTime: 60000,   // 1 minute
+  writingTime: 30000,  // 30 seconds for testing
+  votingTime: 15000,   // 15 seconds for testing
   maxTimeExtensions: 2,
   minNarrativeElements: 3
 };
@@ -105,8 +105,16 @@ class GameSession {
   }
 
   startTimer() {
+    console.log(`Starting timer for phase ${this.phase}, time: ${this.timeRemaining}ms`);
     this.timer = setInterval(() => {
       this.timeRemaining -= 1000;
+      console.log(`Timer tick: ${this.timeRemaining}ms remaining`);
+      
+      // Send timer update to all players
+      if (this.timeRemaining % 10000 === 0 || this.timeRemaining <= 10000) {
+        io.to(this.id).emit('timer-update', this.getGameState());
+      }
+      
       if (this.timeRemaining <= 0) {
         this.timeRemaining = 0;
         this.clearTimer();

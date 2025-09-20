@@ -134,6 +134,11 @@ export const GameProvider = ({ children }) => {
       dispatch({ type: 'SET_GAME_STATE', payload: gameState });
     });
 
+    socket.on('timer-update', (gameState) => {
+      console.log('Timer update received:', gameState.timeRemaining);
+      dispatch({ type: 'SET_GAME_STATE', payload: gameState });
+    });
+
     dispatch({ type: 'SET_GAME_STATE', payload: { socket } });
 
     return () => {
