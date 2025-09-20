@@ -271,21 +271,30 @@ io.on('connection', (socket) => {
     socket.emit('game-created', game.getGameState());
   });
 
-  socket.on('join-game', (gameId, playerName) => {
-    console.log(`Join attempt: gameId=${gameId}, playerName=${playerName}, socketId=${socket.id}`);
+  socket.on('join-game', (gameCode, playerName) => {
+    console.log(`Join attempt: gameCode=${gameCode}, playerName=${playerName}, socketId=${socket.id}`);
     console.log(`Available games:`, Array.from(games.keys()));
     console.log(`Current sessions:`, Array.from(sessions.entries()));
     
-    const game = games.get(gameId);
+    // Find game by 8-character code
+    let gameId = null;
+    for (const [id, game] of games.entries()) {
+      if (id.substring(0, 8).toUpperCase() === gameCode.toUpperCase()) {
+        gameId = id;
+        break;
+      }
+    }
+    
+    const game = gameId ? games.get(gameId) : null;
     if (game && game.addPlayer(socket.id, playerName)) {
       sessions.set(socket.id, gameId);
       socket.join(gameId);
-      console.log(`Player ${playerName} successfully joined game ${gameId}`);
+      console.log(`Player ${playerName} successfully joined game ${gameId} (code: ${gameCode})`);
       socket.emit('game-joined', game.getGameState());
       socket.to(gameId).emit('player-joined', game.getGameState());
     } else {
       const reason = !game ? 'Game not found' : 'Game is full';
-      console.log(`Join failed: ${reason} for game ${gameId}`);
+      console.log(`Join failed: ${reason} for game code ${gameCode}`);
       socket.emit('join-failed', reason);
     }
   });
