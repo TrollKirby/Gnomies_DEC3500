@@ -102,6 +102,9 @@ class GameSession {
   }
 
   startPhase(phase) {
+    if (phase === PHASES.PROMPTING) {
+      this.processVotes();
+    }
     this.phase = phase;
     this.clearTimer();
     
@@ -146,7 +149,7 @@ class GameSession {
         this.collectSubmissions();
         break;
       case PHASES.VOTING:
-        this.processVotes();
+        this.timeoutPhaseChange();
         break;
     }
   }
@@ -231,18 +234,21 @@ class GameSession {
 
   processVotes() {
     // Find highest voted elements
+    console.log("test");
     const topNarrativeElements = this.narrativeElements
       .sort((a, b) => b.votes - a.votes)
       .slice(0, GAME_CONFIG.minNarrativeElements);
+    this.narrativeElements = topNarrativeElements;
     
     const topStoryPart = this.storyParts
       .sort((a, b) => b.votes - a.votes)[0];
-    
+    if (topStoryPart) {this.currentPrompt = topStoryPart.content; }
+  }
+
+  timeoutPhaseChange() {
     if (this.phase === PHASES.VOTING && this.narrativeElements.length > 0) {
-      this.narrativeElements = topNarrativeElements;
       this.startPhase(PHASES.PROMPTING);
     } else if (this.phase === PHASES.VOTING && this.storyParts.length > 0) {
-      this.currentPrompt = topStoryPart.content;
       this.startPhase(PHASES.ALTERNATIVE_ENDINGS);
     }
   }

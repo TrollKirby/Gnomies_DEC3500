@@ -23,6 +23,7 @@ const PromptingPhase = () => {
       <div className="selected-elements">
         <h4>Selected Elements:</h4>
         <div className="elements-tags">
+          {narrativeElements[0].votes}
           {narrativeElements.map(element => (
             <div key={element.id} className="element-tag">
               {element.element}
