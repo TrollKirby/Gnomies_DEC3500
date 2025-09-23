@@ -1,0 +1,25 @@
+{
+  "short_name": "Gnomies",
+  "name": "Gnomies - Collaborative Storytelling",
+  "icons": [
+    {
+      "src": "favicon.ico?v=2",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.svg?v=2",
+      "type": "image/svg+xml",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.svg?v=2",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#667eea",
+  "background_color": "#f8f9fa"
+}
