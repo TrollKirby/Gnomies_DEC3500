@@ -11,7 +11,7 @@ const Lobby = ({ onScreenChange }) => {
   }, [id, onScreenChange]);
 
   const startGame = useCallback(() => {
-    socket.emit('start-phase', 'narrative_agreement');
+    socket.emit('start-phase', 'theme_selection');
     onScreenChange('game');
   }, [socket, onScreenChange]);
 

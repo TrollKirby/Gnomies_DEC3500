@@ -1,6 +1,15 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import io from 'socket.io-client';
 
+export const DEFAULT_THEME_OPTIONS = [
+  'Fantasy',
+  'Sci-Fi',
+  'Funny',
+  'Mystery',
+  'Adventure',
+  'Drama'
+];
+
 const GameContext = createContext();
 
 // Game state reducer
@@ -35,7 +44,29 @@ const gameReducer = (state, action) => {
         alternativeEndings: [],
         timeRemaining: 0,
         timeExtensions: 0,
-        isHost: false
+        isHost: false,
+        themeVoteCounts: {},
+        selectedTheme: null,
+        roundOne: {
+          settingSubmissions: [],
+        characterSubmissions: {
+          character1: [],
+          character2: []
+        }
+        },
+        roundTwo: {
+          leadWriterId: null,
+          writing: '',
+          support: {
+            verbs: [],
+            adjectives: [],
+            drawings: []
+          },
+          turnOrder: [],
+          completedLeads: [],
+          segments: []
+        },
+        themeVotes: []
       };
     case 'SET_ERROR':
       return {
@@ -67,14 +98,40 @@ const initialState = {
   isHost: false,
   isConnected: false,
   socket: null,
-  error: null
+  error: null,
+  themeOptions: DEFAULT_THEME_OPTIONS,
+  themeVoteCounts: {},
+  selectedTheme: null,
+  roundOne: {
+    settingSubmissions: [],
+    characterSubmissions: {
+      character1: [],
+      character2: []
+    }
+  },
+  roundTwo: {
+    leadWriterId: null,
+    writing: '',
+    support: {
+      verbs: [],
+      adjectives: [],
+      drawings: []
+    },
+    turnOrder: [],
+    completedLeads: [],
+    segments: []
+  },
+  themeVotes: []
 };
 
 export const GameProvider = ({ children }) => {
   const [state, dispatch] = useReducer(gameReducer, initialState);
 
   useEffect(() => {
-    const socket = io();
+    const socketUrl = process.env.REACT_APP_SOCKET_URL
+      || (process.env.NODE_ENV === 'development' ? 'http://localhost:8080' : '');
+
+    const socket = io(socketUrl || undefined);
     
     // Socket event listeners
     socket.on('connect', () => {
@@ -111,7 +168,16 @@ export const GameProvider = ({ children }) => {
     });
 
     socket.on('phase-started', (gameState) => {
+      dispatch({ type: 'CLEAR_ERROR' });
       dispatch({ type: 'SET_GAME_STATE', payload: gameState });
+    });
+
+    socket.on('game-updated', (gameState) => {
+      dispatch({ type: 'SET_GAME_STATE', payload: gameState });
+    });
+
+    socket.on('phase-start-failed', ({ reason }) => {
+      dispatch({ type: 'SET_ERROR', payload: reason || 'Unable to change phase.' });
     });
 
     socket.on('narrative-element-added', (gameState) => {

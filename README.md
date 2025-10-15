@@ -1,215 +1,147 @@
-# 🎭 Gnomies - Collaborative Storytelling (React)
+# Gnomies – Collaborative Storytelling for Small Groups
 
-A real-time collaborative storytelling application built with React that addresses common issues in group creative writing through structured phases, anonymous voting, and inclusive participation features.
+Gnomies is a real-time party game that guides two to eight players through creating a branching story together. A structured flow, live sockets, and lightweight prompts keep the session moving while still leaving space for improvisation and creativity.
 
-## ✨ Features
+## Why Gnomies?
+- **Runs in the browser** – no installs, everyone joins from a shared code.
+- **Guided collaboration** – clearly defined phases help shy writers participate.
+- **Inclusive inputs** – players can contribute with text, drawings, and images for inspiration.
+- **Host controls** – timers, phase changes, and extensions stay in the facilitator’s hands.
 
-### Core Functionality
-- **Real-time Collaboration**: Multiple players can join and participate simultaneously
-- **Anonymous Voting**: Vote on ideas without revealing identity to reduce social pressure
-- **Multiple Input Types**: Text and drawing capabilities for diverse expression
-- **Structured Phases**: Guided workflow prevents chaos and ensures participation
-- **Timer Management**: Built-in timers with host-controlled extensions
+## Feature Highlights
+- Live Socket.IO transport keeps the lobby, votes, and story content synchronized.
+- Theme selection with instant vote tallies and host confirmation before writing begins.
+- Round 1 prompts collect setting details plus two character write-ups inspired by reference images.
+- Anonymous story seeds keep Round 1 submissions unbiased before the collaboration sprint.
+- Round 2 collaboration sprint rotates through every player, giving each person a timed drafting turn while others feed verbs, adjectives, or drawings.
+- Auto-saving lead drafts pushes updates to everyone in real time while hosts retain control over turn hand-offs.
+- Final story reveal stitches everyone’s contributions into one continuous narrative.
+- Time management with per-phase timers and limited host-triggered extensions.
+- Automatic anonymous codenames keep every contribution nameless.
 
-### Game Phases
-1. **Narrative Agreement**: Players suggest story elements (characters, setting, conflict)
-2. **Element Voting**: Anonymous voting to select the most popular elements
-3. **Prompt Creation**: Generate opening prompts based on selected elements
-4. **Story Writing**: Collaborative story building with text and drawing
-5. **Alternative Endings**: Create multiple story conclusions
-6. **Final Selection**: Vote on the best ending
+## Game Flow Overview
 
-### Addressing Design Issues
-- **Reduces Sharing Anxiety**: Anonymous contributions and voting
-- **Prevents Writer's Block**: Structured prompts and multiple input methods
-- **Accommodates Different Speeds**: Timer extensions and flexible participation
-- **Ensures Cohesion**: Narrative agreement phase prevents story drift
-- **Inclusive Participation**: Drawing options for non-textual thinkers
+| Phase | What Happens | Host Tools |
+| --- | --- | --- |
+| **Lobby** | Players enter an 8-character room code. Minimum two players required to start. | Start game, leave room |
+| **Theme Selection** | Everyone votes on Fantasy, Sci-Fi, Funny, Mystery, Adventure, or Drama. Counts update in real time. | Finalize winning theme |
+| **Round 1 – Setting** | Players describe the story location in free text. | Advance once at least one setting is submitted |
+| **Round 1 – Character 1 & 2** | Players view reference images (configurable) and write quick bios. | Move from Character 1 → Character 2 → Story Seeds |
+| **Round 1 – Story Seeds** | Everyone reviews the anonymous Round 1 submissions before the sprint. | Launch Round 2 when ready |
+| **Round 2 – Lead Selection** | Host chooses who will drive the next scene. | Assign a lead writer |
+| **Round 2 – Collaboration** | Lead writes for two minutes; everyone else supplies verbs, adjectives, or drawings. Control then passes to the next player until all have contributed. | Trigger the 2-minute sprint, optional +60s extensions, finish a turn early |
+| **Final Story** | Once every writer has taken a turn, the finished story appears as one cohesive piece for the group to read. | Restart session, export the story |
 
-## 🚀 Quick Start
+## Getting Started
 
 ### Prerequisites
-- Node.js (v14 or higher)
-- npm or yarn
+- Node.js 16+
+- npm (bundled with Node)
 
 ### Installation
-
-1. **Clone and Install**
-   ```bash
-   git clone <repository-url>
-   cd Gnomies_DEC3500
-   npm install
-   cd client
-   npm install
-   cd ..
-   ```
-
-2. **Build React App**
-   ```bash
-   npm run build
-   ```
-
-3. **Start the Server**
-   ```bash
-   npm start
-   ```
-
-4. **Access the Application**
-   - Main device: `http://localhost:3000`
-   - Other devices: `http://[YOUR_IP]:3000`
-
-### Development Mode
-
-For development with hot reloading:
-
 ```bash
-# Terminal 1 - Start backend server
-npm run dev
-
-# Terminal 2 - Start React development server
-npm run client
+git clone <repository-url>
+cd Gnomies_DEC3500
+npm install          # installs server dependencies
+cd client
+npm install          # installs React dependencies
+cd ..
 ```
 
-Or run both simultaneously:
+### Development Workflow
 ```bash
+# Terminal 1 – backend with hot reload
+npm run dev
+
+# Terminal 2 – React development server
+npm run client
+
+# Or start both together
 npm run dev-full
 ```
 
-### Finding Your IP Address
+The React dev server uses port `3000`; the Node server uses `8080`.
 
-**On macOS/Linux:**
+### Production Build
 ```bash
-ifconfig | grep "inet " | grep -v 127.0.0.1
+npm run build   # builds the React client into client/build
+npm start       # serves the production bundle and Socket.IO API
 ```
 
-**On Windows:**
-```bash
-ipconfig | findstr "IPv4"
-```
+Open `http://localhost:8080` to reach the combined app. If you need to access the game from other devices on your network, share `http://<your-ip>:8080`.
 
-## 🎮 How to Play
+### Environment Variables
+- `REACT_APP_SOCKET_URL` (optional): set this in the client environment when the Socket.IO server is hosted somewhere other than the same origin. During development the app falls back to `http://localhost:8080`.
 
-### Creating a Game
-1. Enter your name and click "Create Game"
-2. Share the 8-character game code with other players
-3. Wait for players to join (minimum 2, maximum 8)
-4. Click "Start Game" when ready
+### Finding Your Local IP
+- macOS / Linux: `ifconfig | grep "inet " | grep -v 127.0.0.1`
+- Windows: `ipconfig | findstr "IPv4"`
 
-### Joining a Game
-1. Enter the game code and your name
-2. Click "Join Game"
-3. Wait for the host to start the game
+## Playing a Session
 
-### Game Flow
-1. **Setup Phase**: Players join and prepare
-2. **Narrative Agreement**: Suggest story elements
-3. **Voting**: Vote on your favorite elements
-4. **Prompting**: Create story opening based on selected elements
-5. **Writing**: Continue the story with text or drawings
-6. **Alternative Endings**: Create different conclusions
-7. **Final Vote**: Choose the best ending
-8. **Complete**: Export and share your story
+Every player gets an anonymous codename automatically when they open the landing page—no name entry required.
 
-## 🛠️ Technical Details
+### Host Checklist
+1. Open the app and click **Create Game**.
+2. Share the 8-character code displayed in the lobby.
+3. Wait until at least two players are present.
+4. Click **Start Game** to launch the Theme Selection phase.
+5. After reviewing the story seeds, assign a Round 2 lead, kick off the two-minute collaboration sprint, and advance the turn when a writer finishes so every player cycles through.
+6. Use the host-only buttons in each phase to advance or extend time, and jump straight to the finale once everyone has contributed.
 
-### Architecture
-- **Backend**: Node.js with Express and Socket.io
-- **Frontend**: React with hooks and context
-- **Real-time**: WebSocket connections for live updates
-- **Local Network**: Designed for local device connections
+### Player Experience
+1. Enter the shared code and choose **Join Game**.
+2. Vote on the theme and contribute to the setting and character prompts.
+3. During Round 2, feed verbs, adjectives, or drawing links to the active lead—and when the baton reaches you, use your timed turn to expand the story.
+4. Watch the finished story appear as one seamless narrative once the last writer hands off, then collaborate on another round if you’d like.
 
-### Key Components
-- `server.js`: Main server with game logic and WebSocket handling
-- `client/src/App.js`: Main React application
-- `client/src/context/GameContext.js`: Game state management with React Context
-- `client/src/components/`: React components for each game phase
-- `client/src/App.css`: Responsive styling and animations
+### Character Images
+Reference art for Character 1 and Character 2 lives in `client/public/character-images/`:
+- `character1.png`
+- `character2.png`
 
-### Game State Management
-- Server-side game state with real-time synchronization
-- Phase-based progression system
-- Anonymous voting and contribution tracking
-- Timer management with host controls
+Replace these placeholders with your own artwork to customize the experience.
 
-## 🎯 Design Solutions
-
-### Problem: Sharing Anxiety
-**Solution**: Anonymous contributions and voting system reduces social pressure
-
-### Problem: Writer's Block
-**Solution**: Structured prompts, multiple input types (text/drawing), and guided phases
-
-### Problem: Different Writing Speeds
-**Solution**: Timer system with host-controlled extensions (up to 2 per session)
-
-### Problem: Story Cohesion
-**Solution**: Narrative agreement phase ensures all players contribute to story direction
-
-### Problem: Group Dynamics
-**Solution**: Anonymous voting prevents conflicts and ensures fair selection
-
-## 📱 Mobile Support
-
-The application is fully responsive and works on:
-- Desktop computers
-- Tablets
-- Mobile phones
-- Any device with a modern web browser
-
-## 🔧 Development
-
-### Running in Development Mode
-```bash
-npm run dev
-```
-
-### Project Structure
+## Project Structure
 ```
 Gnomies_DEC3500/
-├── server.js              # Main server file
-├── package.json           # Dependencies and scripts
-├── README.md             # This file
-├── start.sh              # Startup script
-└── client/               # React frontend
-    ├── package.json      # React dependencies
-    ├── public/           # Static assets
-    ├── src/              # React source code
-    │   ├── App.js        # Main React component
-    │   ├── App.css       # Styling
-    │   ├── context/      # React Context for state
-    │   └── components/   # React components
-    └── build/            # Production build
+├── server.js                  # Express + Socket.IO game server
+├── start.sh                   # Helper script (optional)
+├── package.json               # Server scripts and dependencies
+├── client/
+│   ├── package.json           # React scripts and dependencies
+│   ├── public/
+│   │   ├── character-images/  # Optional reference art
+│   │   └── index.html
+│   └── src/
+│       ├── App.jsx            # Application shell
+│       ├── App.css            # Global styling
+│       ├── context/GameContext.jsx
+│       └── components/
+│           ├── Landing.jsx
+│           ├── Lobby.jsx
+│           ├── Game.jsx
+│           └── phases/        # Individual phase UIs
+└── README.md
 ```
 
-## 🎨 Customization
+## Configuration Notes
+- Gameplay limits live in `GAME_CONFIG` inside `server.js` (max players, timers, etc.).
+- The host can request up to two time extensions per game.
+- The server enforces the minimum two-player requirement before Theme Selection begins.
+- Socket events such as `vote-theme`, `submit-round1-setting`, and `start-phase` drive the round system; see `server.js` for the full event catalogue.
 
-### Modifying Game Rules
-Edit `GAME_CONFIG` in `server.js`:
-```javascript
-const GAME_CONFIG = {
-  maxPlayers: 8,           // Maximum players per game
-  writingTime: 300000,     // Writing phase duration (ms)
-  votingTime: 60000,       // Voting phase duration (ms)
-  maxTimeExtensions: 2,    // Maximum time extensions
-  minNarrativeElements: 3  // Minimum elements to select
-};
+## Tech Stack
+- **Frontend:** React, Context API, CSS modules
+- **Backend:** Node.js, Express, Socket.IO
+- **Tooling:** npm scripts, concurrently, nodemon for development
+
+## Contributing
+Bug fixes and gameplay tweaks are welcome. Before opening a pull request, run:
+```bash
+npm run build
 ```
+to ensure the combined build succeeds.
 
-### Styling
-Modify `public/styles.css` to customize the appearance while maintaining functionality.
-
-## 🤝 Contributing
-
-This is a collaborative storytelling application designed for educational and creative purposes. Feel free to:
-- Report bugs or issues
-- Suggest new features
-- Improve the user experience
-- Add new input methods or game phases
-
-## 📄 License
-
-MIT License - Feel free to use and modify for your projects.
-
----
-
-**Happy Storytelling! 🎭✨**
+## License
+MIT © Gnomies Team

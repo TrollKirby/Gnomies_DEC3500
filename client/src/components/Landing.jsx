@@ -1,11 +1,19 @@
 import React, { useState, useCallback } from 'react';
 import { useGame } from '../context/GameContext.jsx';
 
+const generateAnonymousName = () => {
+  const adjectives = ['Mysterious', 'Silent', 'Curious', 'Brave', 'Wandering', 'Clever'];
+  const nouns = ['Gnome', 'Sprite', 'Scribe', 'Storyteller', 'Quill', 'Owl'];
+  const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const noun = nouns[Math.floor(Math.random() * nouns.length)];
+  const number = Math.floor(100 + Math.random() * 900);
+  return `${adjective} ${noun} ${number}`;
+};
+
 const Landing = ({ onScreenChange }) => {
   const { socket, error, dispatch } = useGame();
-  const [hostName, setHostName] = useState('');
+  const [anonymousName] = useState(() => generateAnonymousName());
   const [gameCode, setGameCode] = useState('');
-  const [playerName, setPlayerName] = useState('');
   const [localError, setLocalError] = useState('');
 
   const clearErrors = useCallback(() => {
@@ -14,34 +22,32 @@ const Landing = ({ onScreenChange }) => {
   }, [dispatch]);
 
   const createGame = useCallback(() => {
-    if (!hostName.trim()) {
-      setLocalError('Please enter your name');
+    if (!socket || !socket.connected) {
+      setLocalError('Connecting to server. Please try again in a moment.');
+      if (socket && !socket.connected) {
+        socket.connect();
+      }
       return;
     }
     clearErrors();
-    console.log('Creating game with name:', hostName.trim());
-    socket.emit('create-game', hostName.trim());
-  }, [hostName, socket, clearErrors]);
+    console.log('Creating game with anonymous name:', anonymousName);
+    socket.emit('create-game', anonymousName);
+  }, [anonymousName, socket, clearErrors]);
 
   const joinGame = useCallback(() => {
-    if (!gameCode.trim() || !playerName.trim()) {
-      setLocalError('Please enter both game code and your name');
+    if (!gameCode.trim()) {
+      setLocalError('Please enter a game code');
       return;
     }
     clearErrors();
-    console.log('Joining game with code:', gameCode.trim(), 'and name:', playerName.trim());
+    console.log('Joining game with code:', gameCode.trim(), 'and anonymous name:', anonymousName);
     console.log('Socket connected:', socket.connected);
     console.log('Socket ID:', socket.id);
-    socket.emit('join-game', gameCode.trim(), playerName.trim());
-  }, [gameCode, playerName, socket, clearErrors]);
+    socket.emit('join-game', gameCode.trim(), anonymousName);
+  }, [gameCode, anonymousName, socket, clearErrors]);
 
   const handleGameCodeChange = useCallback((e) => {
     setGameCode(e.target.value.toUpperCase());
-    clearErrors();
-  }, [clearErrors]);
-
-  const handlePlayerNameChange = useCallback((e) => {
-    setPlayerName(e.target.value);
     clearErrors();
   }, [clearErrors]);
 
@@ -60,6 +66,9 @@ const Landing = ({ onScreenChange }) => {
           <h1>Gnomies</h1>
         </div>
         <p className="subtitle">Collaborative Storytelling Adventure</p>
+        <p className="subtitle">
+          You will appear as <strong>{anonymousName}</strong>
+        </p>
         
         {(error || localError) && (
           <div className={`error-message ${(error || localError).includes('Copied') ? 'success' : ''}`}>
@@ -71,13 +80,6 @@ const Landing = ({ onScreenChange }) => {
           <div className="option-card">
             <h3>Create Game</h3>
             <p>Start a new storytelling session</p>
-            <input
-              type="text"
-              value={hostName}
-              onChange={(e) => setHostName(e.target.value)}
-              placeholder="Your name"
-              maxLength="20"
-            />
             <button onClick={createGame} className="btn btn-primary">
               Create Game
             </button>
@@ -92,13 +94,6 @@ const Landing = ({ onScreenChange }) => {
               onChange={handleGameCodeChange}
               placeholder="Game Code"
               maxLength="8"
-            />
-            <input
-              type="text"
-              value={playerName}
-              onChange={handlePlayerNameChange}
-              placeholder="Your name"
-              maxLength="20"
             />
             <button onClick={joinGame} className="btn btn-secondary">
               Join Game
